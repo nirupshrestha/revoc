@@ -29,7 +29,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
 
 const CourseTab = () => {
-  
+
   const [input, setInput] = useState({
     courseTitle: "",
     subTitle: "",
@@ -42,14 +42,14 @@ const CourseTab = () => {
 
   const params = useParams();
   const courseId = params.courseId;
-  const { data: courseByIdData, isLoading: courseByIdLoading , refetch} =
+  const { data: courseByIdData, isLoading: courseByIdLoading, refetch } =
     useGetCourseByIdQuery(courseId);
 
-    const [publishCourse, {}] = usePublishCourseMutation();
- 
+  const [publishCourse, { }] = usePublishCourseMutation();
+
   useEffect(() => {
-    if (courseByIdData?.course) { 
-        const course = courseByIdData?.course;
+    if (courseByIdData?.course) {
+      const course = courseByIdData?.course;
       setInput({
         courseTitle: course.courseTitle,
         subTitle: course.subTitle,
@@ -59,6 +59,9 @@ const CourseTab = () => {
         coursePrice: course.coursePrice,
         courseThumbnail: "",
       });
+      if(course.courseThumbnail){
+        setPreviewThumbnail(course.courseThumbnail);
+      }
     }
   }, [courseByIdData]);
 
@@ -91,6 +94,9 @@ const CourseTab = () => {
   };
 
   const updateCourseHandler = async () => {
+    console.log("Current input state:", input);
+
+    
     const formData = new FormData();
     formData.append("courseTitle", input.courseTitle);
     formData.append("subTitle", input.subTitle);
@@ -105,8 +111,8 @@ const CourseTab = () => {
 
   const publishStatusHandler = async (action) => {
     try {
-      const response = await publishCourse({courseId, query:action});
-      if(response.data){
+      const response = await publishCourse({ courseId, query: action });
+      if (response.data) {
         refetch();
         toast.success(response.data.message);
       }
@@ -124,8 +130,8 @@ const CourseTab = () => {
     }
   }, [isSuccess, error]);
 
-  if(courseByIdLoading) return <h1>Loading...</h1>
- 
+  if (courseByIdLoading) return <h1>Loading...</h1>
+
   return (
     <Card>
       <CardHeader className="flex flex-row justify-between">
@@ -136,7 +142,7 @@ const CourseTab = () => {
           </CardDescription>
         </div>
         <div className="space-x-2">
-          <Button disabled={courseByIdData?.course.lectures.length === 0} variant="outline" onClick={()=> publishStatusHandler(courseByIdData?.course.isPublished ? "false" : "true")}>
+          <Button disabled={courseByIdData?.course.lectures.length === 0} variant="outline" onClick={() => publishStatusHandler(courseByIdData?.course.isPublished ? "false" : "true")}>
             {courseByIdData?.course.isPublished ? "Unpublished" : "Publish"}
           </Button>
           <Button>Remove Course</Button>
@@ -151,7 +157,7 @@ const CourseTab = () => {
               name="courseTitle"
               value={input.courseTitle}
               onChange={changeEventHandler}
-              placeholder="Ex. Fullstack developer"
+              placeholder="Editing Course 2025"
             />
           </div>
           <div>
@@ -161,7 +167,7 @@ const CourseTab = () => {
               name="subTitle"
               value={input.subTitle}
               onChange={changeEventHandler}
-              placeholder="Ex. Become a Fullstack developer from zero to hero in 2 months"
+              placeholder="Beginner Course for Editing 2025"
             />
           </div>
           <div>
@@ -172,7 +178,7 @@ const CourseTab = () => {
             <div>
               <Label>Category</Label>
               <Select
-                defaultValue={input.category}
+                value={input.category}
                 onValueChange={selectCategory}
               >
                 <SelectTrigger className="w-[180px]">
@@ -181,22 +187,19 @@ const CourseTab = () => {
                 <SelectContent>
                   <SelectGroup>
                     <SelectLabel>Category</SelectLabel>
-                    <SelectItem value="Next JS">Next JS</SelectItem>
-                    <SelectItem value="Data Science">Data Science</SelectItem>
-                    <SelectItem value="Frontend Development">
-                      Frontend Development
+                    <SelectItem value="Photography">Photography</SelectItem>
+                    <SelectItem value="Videography">Videography</SelectItem>
+                    <SelectItem value="Editing and Post-Production">
+                      Editing and Post-Production
                     </SelectItem>
-                    <SelectItem value="Fullstack Development">
-                      Fullstack Development
+                    <SelectItem value="Equipment Mastery">
+                      Equipment Mastery
                     </SelectItem>
-                    <SelectItem value="MERN Stack Development">
-                      MERN Stack Development
+                    <SelectItem value="Creative Projects">
+                      Creative Projects
                     </SelectItem>
-                    <SelectItem value="Javascript">Javascript</SelectItem>
-                    <SelectItem value="Python">Python</SelectItem>
-                    <SelectItem value="Docker">Docker</SelectItem>
-                    <SelectItem value="MongoDB">MongoDB</SelectItem>
-                    <SelectItem value="HTML">HTML</SelectItem>
+                    <SelectItem value="Trend and Innovations">Trend and Innovations</SelectItem>
+
                   </SelectGroup>
                 </SelectContent>
               </Select>
@@ -204,7 +207,7 @@ const CourseTab = () => {
             <div>
               <Label>Course Level</Label>
               <Select
-                defaultValue={input.courseLevel}
+                value={input.courseLevel}
                 onValueChange={selectCourseLevel}
               >
                 <SelectTrigger className="w-[180px]">
@@ -221,7 +224,7 @@ const CourseTab = () => {
               </Select>
             </div>
             <div>
-              <Label>Price in (INR)</Label>
+              <Label>Price in (NPR)</Label>
               <Input
                 type="number"
                 name="coursePrice"
@@ -243,7 +246,7 @@ const CourseTab = () => {
             {previewThumbnail && (
               <img
                 src={previewThumbnail}
-                className="e-64 my-2"
+                className="w-64 h-40 object-cover my-2 rounded-lg border"
                 alt="Course Thumbnail"
               />
             )}

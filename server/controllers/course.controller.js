@@ -17,6 +17,7 @@ export const createCourse = async (req,res) => {
             category,
             creator:req.id
         });
+        // console.log("course created =",course);
 
         return res.status(201).json({
             course,
@@ -110,6 +111,7 @@ export const getCreatorCourses = async (req,res) => {
     }
 }
 export const editCourse = async (req,res) => {
+    // console.log("course edit function")
     try {
         const courseId = req.params.courseId;
         const {courseTitle, subTitle, description, category, courseLevel, coursePrice} = req.body;
@@ -127,10 +129,10 @@ export const editCourse = async (req,res) => {
                 const publicId = course.courseThumbnail.split("/").pop().split(".")[0];
                 await deleteMediaFromCloudinary(publicId); // delete old image
             }
-            // upload a thumbnail on clourdinary
+            // upload a thumbnail on cloudinary
             courseThumbnail = await uploadMedia(thumbnail.path);
         }
-
+ 
  
         const updateData = {courseTitle, subTitle, description, category, courseLevel, coursePrice, courseThumbnail:courseThumbnail?.secure_url};
 
